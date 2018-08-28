@@ -8,3 +8,30 @@ var connection = mysql.createConnection({
 	password:"",
 	database:"BamazonDB"
 });
+
+connection.connect(function(err) {
+    if (err) throw err;
+    console.log("=================================\n");
+    console.log("Welcome to Bamazon!!");
+    console.log("=================================\n");
+    displayItems();
+  });
+  
+  function displayItems() {
+    connection.query("SELECT * FROM bamazonTable", function(err, res) {
+  
+      console.log("Items for sale:");
+      console.log("\n=================================");
+
+      for (i = 0; i < res.length; i++){
+        console.log("++++++++++++++++++++");
+        console.log("Item ID: " + res[i].item_id);
+        console.log("Name: " + res[i].product_name);
+        console.log("Category: " + res[i].department_name);
+        console.log("Price: $" + res[i].price)
+        console.log("Qty: " + res[i].stock_quantity)
+      }
+      console.log("++++++++++++++++++++\n");
+      promptID();
+    })
+  };

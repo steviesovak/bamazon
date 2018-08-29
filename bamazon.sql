@@ -15,7 +15,7 @@ SELECT * FROM bamazonTable;
 
 INSERT INTO bamazonTable (product_name, department_name, price, stock_quantity) 
 values ('Play-Doh', 'Toys & Games', 7, 10000), 
-('Super Mario Party for Nintendo Switch', 'Video Games', 60, 23), 
+('Super Mario Party - Nintendo Switch', 'Video Games', 60, 23), 
 ('Uno Card Game', 'Toys & Games', 5, 200),
 ('Deadpool 2 Blu-ray', 'Movies & TV', 23, 2000), 
 ('Fujifilm Instax Mini 9', 'Camera & Photo', 60, 356), 

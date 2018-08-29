@@ -7,7 +7,7 @@ var connection = mysql.createConnection({
 	host:"localhost",
 	port:3306,
 	user:"root",
-	password:"",
+	password:"awesome123",
 	database:"BamazonDB"
 });
 
@@ -81,4 +81,102 @@ connection.connect(function(err) {
       })
     });
   };
+
+  //function to prompt shopper to give qty of the item they want to buy
+  
+  function promptQty(itemID) {
+    inquirer.prompt([
+    {
+      name: "promptQty",
+      message: "How many of these would you like to buy?"
+    }])
+    .then(function(answers){
+      var quantity = answers.promptQty;
+  
+      connection.query("SELECT * FROM bamazonTable where item_id=" + itemID, function(err, res) {
+        
+        var stockQuantity = res[0].stock_quantity;
+        var productName = res[0].product_name;
+        var productPrice = res[0].price;
+        var total = res[0].price * quantity;
+  
+    // based on their qty answer
+        
+        if (quantity > stockQuantity){
+          console.log("Sorry! There are only " + stockQuantity + " available");
+          promptQty(itemID);
+        }
+        else {
+          
+          // if they want a qty of 1
+          if (quantity === 1){
+            console.log("+++++++++++++++++++++++\n");
+            console.log("Thank you for shopping with Bamazon.");
+            console.log("You ordered " + quantity + " " + productName + " for $" + productPrice + ".");
+            console.log("Your total is $" + total + ".");
+            console.log("++++++++++++++++++++++++\n");
+
+  
+            updateQty(itemID, productName, quantity, stockQuantity)
+            confirm();
+          }
+
+          //if they want a qty greater than 1
+          else if (quantity > 1){
+            console.log("++++++++++++++++++++++++\n");
+            console.log("Thank you for shopping with Bamazon.");
+            console.log("You ordered " + quantity + " " + productName + "s for $" + productPrice + " each.");
+            console.log("Your total is $" + total + ".");
+            console.log("++++++++++++++++++++++++\n");
+
+  
+            updateQty(itemID, productName, quantity, stockQuantity)
+            confirm();
+          }
+          else if (quantity == 0){
+            console.log("You typed 0...Did you mean to order nothing??");
+            confirm();
+          }
+          else {
+            console.log("Please enter a valid quantity to continue.");
+            promptQty(itemID);
+          }
+        }
+      })
+    })  
+  };
+
+  //function to update quantity available 
+  
+  function updateQty(itemID, productName, quantity, stockQuantity) {
+  
+    var updatedQuantity = stockQuantity - quantity;
+    console.log("===================");
+    console.log("ItemID: " + itemID);
+    console.log("There was " + stockQuantity);
+    console.log("You Bought " + quantity);
+    console.log("There are now " + updatedQuantity);
+    console.log("===================");
+  
+    var sql = "UPDATE bamazonTable SET stock_quantity = '" + updatedQuantity + "' WHERE item_id = '" + itemID + "'";
+    connection.query(sql , function (err, result) {
+      if (err) throw err;
+    });
+  }
+
+  //confirm function
+  
+  function confirm() {
+    inquirer.prompt([
+    {
+      name: "confirm",
+      message: "Press any key to continue."
+    }])
+    .then(function(answers){
+      var confirm = answers.confirm;
+      displayItems();
+    })
+  };
+  
+
 
